@@ -1,0 +1,56 @@
+ server {
+         listen 80;
+         server_name ec2-15-207-111-37.ap-south-1.compute.amazonaws.com;
+
+        location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/test3/AwsDemo/app.sock;
+        }
+
+        }
+
+
+ 2*server {
+
+         listen 80;
+         server_name 13.233.4.186 dig-kart.jithinraj-pro.tech jithinraj-pro.tech www.jithinraj-pro.tech;
+
+        location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/digtial-kart2/app.sock;
+        }
+
+        location /static/ {
+              alias /home/ubuntu/digtial-kart2/statics/;
+               }
+
+        location /media/ {
+        alias /home/ubuntu/digtial-kart2/digtech/static/media/;
+         }
+
+        }
+
+#making the https connection   # this code is for the old ubuntu
+
+sudo apt-add-repository -r ppa:certbot/certbot
+sudo apt-get install python3-certbot-nginx
+
+sudo certbot --nginx -d www.jithinraj-pro.tech -d dig-kart.jithinraj-pro.tech
+
+jithinbuasc@gmail.com
+
+Agree : A 
+
+Yes : Y 
+
+enter 1 to 2
+
+sudo systemctl reload nginx
+
+#this code for the new one
+https://tecadmin.net/how-to-setup-lets-encrypt-on-ubuntu-20-04/
+please go through this link 
+
+
+
+
