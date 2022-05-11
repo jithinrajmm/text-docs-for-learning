@@ -1,0 +1,317 @@
+1 create a instace in aws 
+EC3 => security groups to http ip4 genaral//// security group
+
+///////SECURITY GROUP//////////////
+
+we should assign the security group to our instaces 
+in that security group there have a certain rules , we need to give the permission
+for the traffic, here we are saying what kind of the trafic we are going to allowed 
+to the instance , default the SSH TRAFFIC IS ALLOWED
+
+http and tcp , https ipv4 , https ipv6 these all are allowed 
+
+go to the security group 
+
+inbound  => edit = > add rule => http anywhere => save
+
+
+//////////////////////////////////////////////////////////
+
+ubuntu 20 lts => review and launch => create pem key pair
+		the public key is given to you 
+		private key is kept in the server
+
+in the program 
+DEBUG = False 
+ALLOWED_HOST = ['*']
+
+console = > python manage.py check --deploy
+
+
+right click on the instance or select the instance and choose the connect option
+
+open the git bash or putty software from where the pem file is stored
+		 (secured socket shell)
+		(SSH, also known as Secure Shell or Secure Socket Shell, 
+		is a network protocol that gives users, particularly system 
+		administrators, a secure way to access a computer over
+ 		an unsecured network.)
+
+		strong authentication 
+		encrypted data processing
+
+public transport messages keeping private
+
+	ipv3 domain name or ip address from the instance we can use this as the domain name
+
+	ROOT53 SERVICE FOR THE DOMAIN NAME SETUP
+
+
+
+WHERE YOUR SAVED THE PEM KEY FILE FROM THERE OPEN GITBASH OR PUTTY
+
+EXAMPLES: COPY THIS AND SAVE ON THE GITBASH
+
+PLEASE MAKE THE PEM FILE AS THE READ ONLY MODE
+
+
+
+
+/////////////////////////////////////////////////////////
+
+sudo apt-get update
+sudo apt-get upgrade -y
+
+this is for the updation of os
+////////////////////////////////////////////////////////////
+
+
+
+Now we need a set of application to serve a our django application
+
+//////////////////////////////////////////////////////////////////
+
+
+APCHE , NGINX  => This application is used  as the servers.........
+
+// 2 
+ 
+
+Wisgi interface in used to making the interface between the application and actual server
+by using the mechanism called unix socket, Wisgy interface => gunicorn - we are using the 
+green unicorn for these wisgi interface  
+ 
+
+//
+
+// python3 --version = check the python is available or not
+
+python3 --version
+sudo apt-get install python3-venv
+sudo python3 -m venv env  
+
+	python3 -m venv env 
+
+ls
+
+source env/bin/activate
+
+
+pip 3 install django or
+clone the repository from the git 
+
+git clone http://link of the repository
+
+
+pip install -r requirements.txt
+
+
+////////////////////////////////////////////////////////////////////////
+
+cd project folder 
+
+
+///////////////////////////gunicor installation/////////////////////////
+
+pip3 install gunicorn
+
+///////////////////////////////nginx installation ///////////////////////
+
+
+sudo apt-get install -y nginx
+
+
+
+/////////////////////////// SETUP THE GUNICORN FILE //////////////////////
+
+
+IN THE PORJECT MAIN FILE WHERE THE SETTING.PY IS SITUTED THERE YOU CAN SEE 
+ 
+wsgi.py FILE 
+ 
+
+GUNICORN CAN ACCESS THE FILE WSIG PY FILE 
+
+/// this is test /////
+
+gunicorn --bind 0.0.0.0:8000 projectsettingsfilename.wsgi:application
+
+
+	//// if we need to work with this  in security group 
+
+		=> add inbound rules
+
+		=> edi add rule =>custom tcp 8000
+
+
+
+//////////////////////////////supervisor///////////////////////////////////
+
+this supervisor is a software is used to make sure application run in bckground always
+whenever the server is restarted 
+whenever the server is reloaded
+
+supervisor make sure that the gunicor is always running 
+
+sudo apt-get install -y  supervisor
+
+///// make a configuration for the supervisor, then only the supervisor can read this 
+file , based on this file the supervisor is going to do something
+
+
+where to log the errror 
+appliction starting 
+
+this all instructio we need to set in the directory etc/supervisor/conf.d/
+
+
+cd etc/supervisor/conf.d/
+ls - there is nothing
+
+
+touch gunicorn.conf
+
+sudo nano gunicorn.conf
+
+
+		what is the program
+		
+		where is the program directory of program, project directory
+
+		command says this is the command we need to run
+
+		command = /home/ubuntu/env/bin/gunicorn --workers how many workers you need 
+
+		--binding to the a uniquer socket
+ 
+
+		gunicorn --bind 0.0.0.0:8000 projectsettingsfilename.wsgi:application
+		
+
+now we will be binding the socket of nginx to the gunicorn
+
+command = /home/ubuntu/bin/gunicorn --workers 3 unix:/home/ubuntu/appsdirectory/app.sock projedirsetting.wsgi.application
+
+
+app.sock whatever the sock
+
+ 
+
+where the eorro file should show 
+
+usually the erros are presented in the val/log/gunicort/gunicorn.err.log/
+same as above line 
+[group:guni]
+programs:gunicor
+
+
+
+//////////////////////////////////////////////////////////////////////////////////
+
+
+supervisor is going to execute this line while loding
+
+[program:gunicorn]
+directory = /home/ubuntu/test3/AwsDemo
+command = /home/ubuntu/env/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/tes$
+
+autostart = true
+autorestart = true
+stderr_logfile = /var/log/gunicorn/gunicorn.err.log
+stdout_logfile = /var/log/gunicorn/gunicorn.out.log
+
+[group:guni]
+programs:gunicorn
+
+last line oru group  enn paraja oru group und aa groupil or programm und gunicor enna program
+athaan last line nte upayogam
+
+the we need to told to the supervisor to access this file 
+(paranj kodukanm ee file aaaan supervisor access cheyandath nn aarodddddddd supervisorod)
+ 
+	mkdir /var/log/gunicorn/
+	sudo supervisor reread
+
+
+this time we get a message 
+
+guni:available
+
+sudo supervisorctl update
+sudo supervisorctl status
+
+
+
+configure nginx to read the file from the socket
+///////////////////////  NGINX CONFIGURATIONS  ////////////////////
+
+THE NGINX FILE ARE SITUATED IN SIDE FO A FILE CALLED 
+
+		=> sites-enabled => sites-available
+
+
+
+cd /etc/nginx/sites-available/
+
+sudo touch django.conf 
+sudo nano django.conf
+
+
+/////////////////////////////////////////////////////////////////////////////////////
+
+server {
+
+         listen 80;
+         server_name 13.233.4.186 dig-kart.jithinraj-pro.tech jithinraj-pro.tech www.jithinraj-pro.tech;
+
+        location / {
+        include proxy_params;
+        proxy_pass http://unix:/home/ubuntu/digtial-kart2/app.sock;
+        }
+
+        location /static/ {
+              alias /home/ubuntu/digtial-kart2/statics/;
+               }
+
+        location /media/ {
+        alias /home/ubuntu/digtial-kart2/digtech/static/media/;
+         }
+
+        }
+
+
+///////////////////////////////////////////////////////////////
+
+sudo nginx -t 
+but this is not reading our file we need to  enable this 
+ln -s django.conf /etc/nginx/sites-enabled/
+
+sudo ln django.conf /etc/nginx/sites-enabled/
+
+
+sudo nginx -t 
+sudo service nginx restart
+sudo superviserctl reload
+sudo systemctl reload nginx
+
+
+
+
+
+
+
+
+
+
+
+		
+
+
+
+
+ 
+
+
+
+
+

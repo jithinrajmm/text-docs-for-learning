@@ -1,0 +1,98 @@
+order_id
+customer_id 
+order_date 
+item_id 
+quantity
+insert into orders values ( 1,1 ,'2020-06-01',1,10),(2,1,'2020-06-08',2,10),(3,2 ,'2020-06-02',1,5),(4,3,'2020-06-03', 3,5),(5,4,'2020-06-04',4,1),(6,4 ,'2020-06-05',5,5),(7,5,'2020-06-05',1,10),(8,5,'2020-06-14',4,5)
+
+create table orders (order_id int,customer_id int,order_date date,item_id int,quantity int)
+
+create table items(item_id int,  item_name varchar(50), item_category varchar(50));
+
+insert into items values(1,'LC Alg. Book','Book' ),(2,'LC DB. Book','Book') ,(3,'LC SmartPhone','Phone'),(4,'LC Phone 2020','Phone'),(5,'LC SmartGlass','Glasses'),(6,'LC T-Shirt XL','T-Shirt')  
+ select extract(isodow from order_date) from orders;
+
+#this is the condition checking based on the order_date table using case
+
+select case 
+when extract(isodow from order_date)=1 then 'monday'
+when extract(isodow from order_date)=2 then 'tuesday'
+when extract(isodow from order_date)=3 then 'wednesday'
+when extract(isodow from order_date)=4 then 'thursday'
+when extract(isodow from order_date)=5 then 'firday'
+when extract(isodow from order_date)=6 then 'saturday'
+when extract(isodow from order_date)=7 then 'sunday'
+end as days from orders;
+
+# group by days second try success
+
+select case 
+when extract(isodow from order_date)=1 then 'monday'
+when extract(isodow from order_date)=2 then 'tuesday'
+when extract(isodow from order_date)=3 then 'wednesday'
+when extract(isodow from order_date)=4 then 'thursday'
+when extract(isodow from order_date)=5 then 'firday'
+when extract(isodow from order_date)=6 then 'saturday'
+when extract(isodow from order_date)=7 then 'sunday'
+end as days,count(*) as count_days from orders group by days;
+
+select case 
+when extract(isodow from order_date)=1 then 'monday'
+when extract(isodow from order_date)=2 then 'tuesday'
+when extract(isodow from order_date)=3 then 'wednesday'
+when extract(isodow from order_date)=4 then 'thursday'
+when extract(isodow from order_date)=5 then 'firday'
+when extract(isodow from order_date)=6 then 'saturday'
+when extract(isodow from order_date)=7 then 'sunday'
+end as days,sum(quantity) from orders group by days;
+
+
+testing of dates with days
+select  
+sum(case
+when extract(isodow from order_date)=1 then quantity else 0 end ) as "monday",
+sum(case
+when extract(isodow from order_date)=2 then quantity else 0 end ) as "tuesday",
+sum(case
+when extract(isodow from order_date)=3 then quantity else 0 end ) as "wednesday",
+sum(case
+when extract(isodow from order_date)=4 then quantity else 0 end ) as "thursday",
+sum(case
+when extract(isodow from order_date)=5 then quantity else 0 end ) as "friday",
+sum(case
+when extract(isodow from order_date)=6 then quantity else 0 end ) as "saturday",
+sum(case
+when extract(isodow from order_date)=7 then quantity else 0 end ) as "sunday"
+from orders group by order_date;
+
+# this is the second try for grouping the items table and orders table
+select item_category as category,  
+sum(case
+when extract(isodow from order_date)=1 then quantity else 0 end ) as "monday",
+sum(case
+when extract(isodow from order_date)=2 then quantity else 0 end ) as "tuesday",
+sum(case
+when extract(isodow from order_date)=3 then quantity else 0 end ) as "wednesday",
+sum(case
+when extract(isodow from order_date)=4 then quantity else 0 end ) as "thursday",
+sum(case
+when extract(isodow from order_date)=5 then quantity else 0 end ) as "friday",
+sum(case
+when extract(isodow from order_date)=6 then quantity else 0 end ) as "saturday",
+sum(case
+when extract(isodow from order_date)=7 then quantity else 0 end ) as "sunday"
+from items join orders on orders.item_id = items.item_id group by item_category;
+
+when extract(isodow from order_date)=3 then sum(quantity) else 0
+end as wednesday
+when extract(isodow from order_date)=4 then sum(quantity) else 0
+end as thursday
+when extract(isodow from order_date)=5 then sum(quantity) else 0
+end as friday
+when extract(isodow from order_date)=6 then sum(quantity) else 0
+end as saturday
+when extract(isodow from order_date)=7 then sum(quantity) else 0
+
+select case 
+when extract(isodow from order_date)=1 then  'monday' 
+end as days ,sum(quantity) as quantity  from orders group by days;

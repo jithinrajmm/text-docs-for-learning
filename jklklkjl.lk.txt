@@ -1,0 +1,4 @@
+insert into hike (name,join_date, gender,department) values ('jithin','2002-06-02','male','IT'),('ram','2033-05-05','male','ACCOUNT'),
+('shiji','2032-04-01','femail','DEv'),('sami','2020-01-06','female','IT');
+
+insert into hikes (hike, place) values (100,'kannamkulam'),(500,'kunnamkulm');
