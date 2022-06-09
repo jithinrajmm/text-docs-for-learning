@@ -293,6 +293,10 @@ sudo nginx -t
 sudo service nginx restart
 sudo superviserctl reload
 sudo systemctl reload nginx
+############################################################################
+this is from the aws documentations
+sudo systemctl daemon-reload
+sudo systemctl restart gunicorn
 
 
 
